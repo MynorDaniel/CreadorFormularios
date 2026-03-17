@@ -1,0 +1,99 @@
+Analisis lenguaje .pkm
+
+Case insensitive
+
+Tipos de tokens | expresion regular
+
+# Signos
+
+MENOR_QUE | <
+MAYOR_QUE | >
+ASIGNACION | =
+COMA | ,
+LLAVE_APERTURA | {
+LLAVE_CIERRE | }
+PARENTESIS_APERTURA | (
+PARENTESIS_CIERRE | )
+DOS_PUNTOS | :
+
+# Operadores
+
+DIVISION | /
+
+# Etiquetas
+
+ETIQUETA_STYLE_APERTURA |	<style>
+ETIQUETA_STYLE_CIERRE	| </style>
+ETIQUETA_SECCION_APERTURA |	<section
+ETIQUETA_SECCION_CIERRE	| </section>
+ETIQUETA_TABLA_APERTURA	| <table>
+ETIQUETA_TABLA_CIERRE	| </table>
+ETIQUETA_CONTENIDO_APERTURA |	<content>
+ETIQUETA_CONTENIDO_CIERRE	| </content>
+ETIQUETA_LINEA_APERTURA	| <line>
+ETIQUETA_LINEA_CIERRE	| </line>
+ETIQUETA_ELEMENTO_APERTURA	| <element>
+ETIQUETA_ELEMENTO_CIERRE	| </element>
+
+# Preguntas
+
+PREGUNTA_ABIERTA	| open
+PREGUNTA_DESPLEGABLE	| drop
+PREGUNTA_SELECCION	| select
+PREGUNTA_MULTIPLE	| multiple
+
+# Propiedades
+
+ANCHO	| width
+ALTO	| height
+POSICION_X	| pointX
+POSICION_Y	| pointY
+ORIENTACION	| orientation
+COLOR	| color
+FONDO	| background
+FUENTE	| font
+FAMILIA	| family
+TEXTO	| text
+TAMANO	| size
+BORDE	| border
+TIPO	| TYPE
+
+VERTICAL	| VERTICAL
+HORIZONTAL	| HORIZONTAL
+
+# Literales
+
+ENTERO | [0-9]+
+CADENA | \"([^\"\\]|\\.)*\"
+
+# Colores
+
+COLOR_HEXADECIMAL | #[0-9A-Fa-f]{6}
+COLOR_PREDEFINIDO | RED|BLUE|GREEN|PURPLE|SKY|YELLOW|BLACK|WHITE
+
+IDENTIFICADOR | [a-zA-Z_][a-zA-Z0-9_]*
+
+# Comentario
+
+COMENTARIO_LINEA | #[^\n]*
+COMENTARIO_BLOQUE | ###([\s\S]*?)###
+
+# Metadatos
+
+AUTOR	| Author
+FECHA	| Fecha
+HORA	| Hora
+DESCRIPCION	| Description
+TOTAL_SECCIONES	| Total\s+de\s+Secciones
+TOTAL_PREGUNTAS	| Total\s+de\s+Preguntas
+ABIERTAS	| Abiertas
+DESPLEGABLES	| Desplegables
+SELECCION	| Selección
+MULTIPLES	| Múltiples
+
+
+
+
+
+
+

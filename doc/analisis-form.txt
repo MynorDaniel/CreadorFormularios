@@ -1,0 +1,117 @@
+Analisis lenguaje .form
+
+Tipos de tokens | expresion regular
+
+# Operadores aritmeticos
+
+SUMA | +
+RESTA | -
+MULTIPLICACION | *
+DIVISION | /
+POTENCIACION | ^
+MODULO | %
+PARENTESIS_APERTURA | (
+PARENTESIS_CIERRE | )
+
+# Operadores de comparacion
+
+MAYOR_QUE | >
+MENOR_QUE | <
+MAYOR_O_IGUAL_QUE | >=
+MENOR_O_IGUAL_QUE | <=
+IGUALDAD | ==
+DIFERENTE | !!
+
+# Operadores logicos
+
+OR | ||
+AND | &&
+NEGACION | ~
+
+# Variables
+
+VAR_NUMBER | number
+VAR_STRING | string
+VAR_SPECIAL | special
+
+# Palabras reservadas
+
+OPEN_QUESTION | OPEN_QUESTION
+DROP_QUESTION | DROP_QUESTION
+SELECT_QUESTION | SELECT_QUESTION
+MULTIPLE_QUESTION | MULTIPLE_QUESTION
+SECTION | SECTION
+TABLE | TABLE
+TEXT | TEXT
+
+DRAW | draw
+WIDTH | width
+HEIGHT | height
+POINT_X | pointX
+POINT_Y | pointY
+ORIENTATION | orientation
+VERTICAL | VERTICAL
+HORIZONTAL | HORIZONTAL
+CONTENT | content
+LABEL | label
+OPTIONS | options
+CORRECT | correct
+
+ELEMENTS | elements
+STYLES | styles
+
+COLOR_PREDEFINIDO | RED | BLUE | GREEN | PURPLE | SKY | BLACK | WHITE
+FUENTE_PREDEFINIDA | MONO | SANS_SERIF | CURSIVE
+TIPO_BORDE | LINE | DOTTED | DOUBLE
+
+IF | IF
+ELSE | ELSE
+WHILE | WHILE
+DO | DO
+FOR | FOR
+IN | in
+
+# Signos
+
+PUNTO | .
+CORCHETE_APERTURA | [
+CORCHETE_CIERRE | ]
+COMA | ,
+DOS_PUNTOS | :
+COMODIN | \?
+ASIGNACION | =
+LLAVE_APERTURA | {
+LLAVE_CIERRE | }
+PUNTO_Y_COMA | ;
+
+# Identificador
+
+IDENTIFICADOR | [a-zA-Z_][a-zA-Z0-9_]*
+
+# Comentarios
+
+COMENTARIO_LINEA | \$[^\n]*
+COMENTARIO_BLOQUE | /\*[\s\S]*?\*/
+
+# Literales
+
+CADENA | \"([^\"\\]|\\.)*\"
+ENTERO | [0-9]+
+DECIMAL | [0-9]+\.[0-9]+
+
+# Colores
+
+COLOR_HEXADECIMAL | #[0-9A-Fa-f]{6}
+
+
+
+
+
+
+
+
+
+
+
+
+

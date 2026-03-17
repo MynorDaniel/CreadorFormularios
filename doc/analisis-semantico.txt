@@ -1,0 +1,8 @@
+Analisis semantico
+
+Reglas:
+
+No repetir atributos
+Tipos correctos
+Comodines por parametro correctos
+Numero correct dentro del rango

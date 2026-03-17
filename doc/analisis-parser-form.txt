@@ -1,0 +1,226 @@
+terminal
+  SUMA, RESTA, MULTIPLICACION, DIVISION, POTENCIACION, MODULO,
+  PARENTESIS_APERTURA, PARENTESIS_CIERRE,
+  MAYOR_O_IGUAL_QUE, MENOR_O_IGUAL_QUE, IGUALDAD, DIFERENTE,
+  MAYOR_QUE, MENOR_QUE,
+  OR, AND, NEGACION,
+  VAR_NUMBER, VAR_STRING, VAR_SPECIAL,
+  OPEN_QUESTION, DROP_QUESTION, SELECT_QUESTION, MULTIPLE_QUESTION,
+  SECTION, TABLE, TEXT,
+  DRAW, WIDTH, HEIGHT, POINT_X, POINT_Y, ORIENTATION,
+  VERTICAL, HORIZONTAL,
+  CONTENT, LABEL, OPTIONS, CORRECT,
+  ELEMENTS, STYLES,
+  COLOR_PREDEFINIDO, FUENTE_PREDEFINIDA, TIPO_BORDE,
+  IF, ELSE, WHILE, DO, FOR, IN,
+  PUNTO, CORCHETE_APERTURA, CORCHETE_CIERRE,
+  COMA, DOS_PUNTOS, COMODIN, ASIGNACION, LLAVE_APERTURA, LLAVE_CIERRE,
+  PUNTO_Y_COMA,
+  DECIMAL, ENTERO, CADENA, COLOR_HEXADECIMAL, IDENTIFICADOR;
+
+precedence left OR;
+precedence left AND;
+precedence right NEGACION;
+precedence nonassoc MAYOR_QUE, MAYOR_O_IGUAL_QUE, MENOR_QUE, MENOR_O_IGUAL_QUE, IGUALDAD, DIFERENTE;
+precedence left SUMA, RESTA;
+precedence left MULTIPLICACION, DIVISION;
+precedence left MODULO;
+precedence right POTENCIACION;
+precedence right UMINUS;
+
+non terminal program, stmt_list, stmt;
+non terminal decl, assign, special_assign, draw_call;
+non terminal element, element_list;
+non terminal section, table, text, question;
+non terminal attr_list, attr;
+non terminal styles_block, style_list, style_item;
+non terminal elements_block, table_elements, table_rows, table_row, table_cells, table_cell;
+non terminal expr, logic_expr, or_chain, and_chain, comparison, arith_expr, term, factor;
+non terminal options_value, option_list, correct_value;
+non terminal color, orientation_val, font_val, border_val;
+non terminal call, arg_list, expr_list;
+
+start with program;
+
+program ::= stmt_list ;
+
+stmt_list ::= stmt_list stmt
+            | stmt
+            ;
+
+stmt ::= decl
+       | assign
+       | special_assign
+       | draw_call
+       | element
+       | if_stmt
+       | while_stmt
+       | do_while_stmt
+       | for_stmt
+       ;
+
+decl ::= VAR_NUMBER IDENTIFICADOR
+       | VAR_NUMBER IDENTIFICADOR ASIGNACION expr
+       | VAR_STRING IDENTIFICADOR
+       | VAR_STRING IDENTIFICADOR ASIGNACION expr
+       ;
+
+assign ::= IDENTIFICADOR ASIGNACION expr ;
+
+special_assign ::= VAR_SPECIAL IDENTIFICADOR ASIGNACION question ;
+
+draw_call ::= IDENTIFICADOR PUNTO DRAW PARENTESIS_APERTURA arg_list_opt PARENTESIS_CIERRE ;
+
+arg_list_opt ::= arg_list | /* vacío */ ;
+arg_list ::= expr ( COMA expr )* ;
+
+element ::= section
+          | table
+          | text
+          | question
+          ;
+
+section ::= SECTION CORCHETE_APERTURA attr_list CORCHETE_CIERRE ;
+
+table ::= TABLE CORCHETE_APERTURA attr_list CORCHETE_CIERRE ;
+
+text ::= TEXT CORCHETE_APERTURA attr_list CORCHETE_CIERRE ;
+
+question ::= OPEN_QUESTION CORCHETE_APERTURA attr_list CORCHETE_CIERRE
+           | DROP_QUESTION CORCHETE_APERTURA attr_list CORCHETE_CIERRE
+           | SELECT_QUESTION CORCHETE_APERTURA attr_list CORCHETE_CIERRE
+           | MULTIPLE_QUESTION CORCHETE_APERTURA attr_list CORCHETE_CIERRE
+           ;
+
+attr_list ::= attr
+            | attr_list COMA attr
+            ;
+
+attr ::= WIDTH DOS_PUNTOS expr
+       | HEIGHT DOS_PUNTOS expr
+       | POINT_X DOS_PUNTOS expr
+       | POINT_Y DOS_PUNTOS expr
+       | ORIENTATION DOS_PUNTOS orientation_val
+       | CONTENT DOS_PUNTOS CADENA
+       | LABEL DOS_PUNTOS CADENA
+       | OPTIONS DOS_PUNTOS options_value
+       | CORRECT DOS_PUNTOS correct_value
+       | ELEMENTS DOS_PUNTOS elements_block
+       | STYLES styles_block
+       ;
+
+orientation_val ::= VERTICAL | HORIZONTAL ;
+
+elements_block ::= LLAVE_APERTURA element_list LLAVE_CIERRE ;
+element_list ::= element
+               | element_list COMA element
+               ;
+
+table_elements ::= LLAVE_APERTURA table_rows LLAVE_CIERRE ;
+table_rows ::= table_row
+             | table_rows COMA table_row
+             ;
+table_row ::= CORCHETE_APERTURA table_cells CORCHETE_CIERRE ;
+table_cells ::= table_cell
+              | table_cells COMA table_cell
+              ;
+table_cell ::= LLAVE_APERTURA element LLAVE_CIERRE ;
+
+styles_block ::= CORCHETE_APERTURA style_list CORCHETE_CIERRE ;
+style_list ::= style_item
+             | style_list COMA style_item
+             ;
+style_item ::= CADENA DOS_PUNTOS color
+             | CADENA DOS_PUNTOS font_val
+             | CADENA DOS_PUNTOS expr
+             | CADENA DOS_PUNTOS border_val
+             ;
+
+font_val ::= FUENTE_PREDEFINIDA ;
+
+border_val ::= PARENTESIS_APERTURA expr COMA TIPO_BORDE COMA color PARENTESIS_CIERRE ;
+
+options_value ::= LLAVE_APERTURA option_list LLAVE_CIERRE
+                | call
+                ;
+
+option_list ::= CADENA
+              | option_list COMA CADENA
+              ;
+
+correct_value ::= expr
+                | LLAVE_APERTURA expr_list LLAVE_CIERRE
+                ;
+
+expr_list ::= expr
+            | expr_list COMA expr
+            ;
+
+call ::= IDENTIFICADOR PARENTESIS_APERTURA arg_list_opt PARENTESIS_CIERRE ;
+
+expr ::= logic_expr ;
+
+logic_expr ::= or_chain
+             | and_chain
+             | NEGACION logic_expr
+             | comparison
+             ;
+
+or_chain ::= comparison OR comparison ( OR comparison )* ;
+and_chain ::= comparison AND comparison ( AND comparison )* ;
+
+comparison ::= arith_expr
+             | arith_expr comp_op arith_expr
+             ;
+
+comp_op ::= MAYOR_QUE
+          | MAYOR_O_IGUAL_QUE
+          | MENOR_QUE
+          | MENOR_O_IGUAL_QUE
+          | IGUALDAD
+          | DIFERENTE
+          ;
+
+arith_expr ::= arith_expr SUMA term
+             | arith_expr RESTA term
+             | term
+             ;
+
+term ::= term MULTIPLICACION factor
+       | term DIVISION factor
+       | term MODULO factor
+       | factor
+       ;
+
+factor ::= RESTA factor %prec UMINUS
+         | PARENTESIS_APERTURA expr PARENTESIS_CIERRE
+         | POTENCIACION factor
+         | ENTERO
+         | DECIMAL
+         | CADENA
+         | IDENTIFICADOR
+         | COMODIN
+         | call
+         ;
+
+color ::= COLOR_HEXADECIMAL
+        | COLOR_PREDEFINIDO
+        | PARENTESIS_APERTURA expr COMA expr COMA expr PARENTESIS_CIERRE
+        | MENOR_QUE expr COMA expr COMA expr MAYOR_QUE
+        ;
+
+if_stmt ::= IF PARENTESIS_APERTURA expr PARENTESIS_CIERRE LLAVE_APERTURA stmt_list LLAVE_CIERRE else_part ;
+else_part ::= ELSE if_stmt
+            | ELSE LLAVE_APERTURA stmt_list LLAVE_CIERRE
+            | /* vacío */
+            ;
+
+while_stmt ::= WHILE PARENTESIS_APERTURA expr PARENTESIS_CIERRE LLAVE_APERTURA stmt_list LLAVE_CIERRE ;
+
+do_while_stmt ::= DO LLAVE_APERTURA stmt_list LLAVE_CIERRE WHILE PARENTESIS_APERTURA expr PARENTESIS_CIERRE ;
+
+for_stmt ::= FOR PARENTESIS_APERTURA assign PUNTO_Y_COMA expr PUNTO_Y_COMA assign PARENTESIS_CIERRE
+             LLAVE_APERTURA stmt_list LLAVE_CIERRE
+           | FOR PARENTESIS_APERTURA IDENTIFICADOR IN expr PUNTO PUNTO expr PARENTESIS_CIERRE
+             LLAVE_APERTURA stmt_list LLAVE_CIERRE
+           ;
