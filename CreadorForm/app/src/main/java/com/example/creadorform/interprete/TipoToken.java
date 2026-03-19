@@ -1,0 +1,170 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Enum.java to edit this template
+ */
+package com.example.creadorform.interprete;
+
+/**
+ *
+ * @author mynordma
+ */
+public enum TipoToken {
+
+    // FORM
+
+    SUMA,
+    RESTA,
+    MULTIPLICACION,
+    DIVISION,
+    POTENCIACION,
+    MODULO,
+    PARENTESIS_APERTURA,
+    PARENTESIS_CIERRE,
+
+    MAYOR_QUE,
+    MENOR_QUE,
+    MAYOR_O_IGUAL_QUE,
+    MENOR_O_IGUAL_QUE,
+    IGUALDAD,
+    DIFERENTE,
+
+    OR,
+    AND,
+    NEGACION,
+
+    VAR_NUMBER,
+    VAR_STRING,
+    VAR_SPECIAL,
+
+    OPEN_QUESTION,
+    DROP_QUESTION,
+    SELECT_QUESTION,
+    MULTIPLE_QUESTION,
+
+    SECTION,
+    TABLE,
+    TEXT,
+
+    DRAW,
+    WIDTH,
+    HEIGHT,
+    POINT_X,
+    POINT_Y,
+    ORIENTATION,
+
+    VERTICAL,
+    HORIZONTAL,
+
+    CONTENT,
+    LABEL,
+    OPTIONS,
+    CORRECT,
+
+    ELEMENTS,
+    STYLES,
+
+    COLOR_PREDEFINIDO,
+    COLOR_RGB,
+    COLOR_HSL,
+    FUENTE_PREDEFINIDA,
+    TIPO_BORDE,
+
+    IF,
+    ELSE,
+    WHILE,
+    DO,
+    FOR,
+    IN,
+
+    PUNTO,
+    CORCHETE_APERTURA,
+    CORCHETE_CIERRE,
+    COMA,
+    DOS_PUNTOS,
+    COMODIN,
+    ASIGNACION,
+    LLAVE_APERTURA,
+    LLAVE_CIERRE,
+    PUNTO_Y_COMA,
+
+    CADENA,
+    ENTERO,
+    DECIMAL,
+    
+    EMOJI_TRISTE,
+    EMOJI_RISA,
+    EMOJI_SERIO,
+    EMOJI_CORAZON,
+    EMOJI_GATO,
+    EMOJI_ESTRELLA,
+
+    COLOR_HEXADECIMAL,
+
+    IDENTIFICADOR,
+
+    ERROR,
+    
+    // PKM
+
+    ETIQUETA_STYLE_APERTURA,
+    ETIQUETA_STYLE_CIERRE,
+
+    ETIQUETA_SECCION_APERTURA,
+    ETIQUETA_SECCION_CIERRE,
+
+    ETIQUETA_TABLA_APERTURA,
+    ETIQUETA_TABLA_CIERRE,
+
+    ETIQUETA_CONTENIDO_APERTURA,
+    ETIQUETA_CONTENIDO_CIERRE,
+
+    ETIQUETA_LINEA_APERTURA,
+    ETIQUETA_LINEA_CIERRE,
+
+    ETIQUETA_ELEMENTO_APERTURA,
+    ETIQUETA_ELEMENTO_CIERRE,
+
+    PREGUNTA_ABIERTA,
+    PREGUNTA_DESPLEGABLE,
+    PREGUNTA_SELECCION,
+    PREGUNTA_MULTIPLE,
+
+    ANCHO,
+    ALTO,
+    POSICION_X,
+    POSICION_Y,
+    ORIENTACION,
+    COLOR,
+    FONDO,
+    FUENTE,
+    FAMILIA,
+    TEXTO,
+    TAMANO,
+    BORDE,
+    TIPO,
+
+    AUTOR,
+    FECHA,
+    HORA,
+    DESCRIPCION,
+    TOTAL_SECCIONES,
+    TOTAL_PREGUNTAS,
+    ABIERTAS,
+    DESPLEGABLES,
+    SELECCION,
+    MULTIPLES,
+    
+    DROP,
+    FONT,
+    LINE,
+    OPEN,
+    SIZE,
+    STYLE,
+    FAMILY,
+    SELECT,
+    ELEMENT,
+    MULTIPLE,
+    BACKGROUND,
+    
+    
+}
