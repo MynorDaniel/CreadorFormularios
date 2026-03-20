@@ -1,7 +1,7 @@
 package com.example.creadorform.controlador
 
 import com.example.creadorform.dominio.Formulario
-import com.example.creadorform.interprete.ManejadorAnalisis
+import com.example.creadorform.interprete.parser.ManejadorAnalisis
 import com.example.creadorform.interprete.analizadorsemantico.AnalizadorSemantico
 import com.example.creadorform.interprete.ast.AST
 import java.io.StringReader
@@ -22,8 +22,13 @@ class AnalisisControlador {
         val analizadorSemantico : AnalizadorSemantico = AnalizadorSemantico()
         analizadorSemantico.analizarSemantica(ast)
 
-        _errores = manejador.reporteGeneral
+        val erroresSemanticos = analizadorSemantico.errores.joinToString(separator = "\n")
 
+        val sb = StringBuilder()
+        _errores = sb.append(manejador.reporteGeneral)
+            .append("\n")
+            .append(erroresSemanticos)
+            .toString()
 
         // Creacion de la entrada
         val formulario: Formulario = Formulario()

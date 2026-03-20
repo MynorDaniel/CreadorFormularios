@@ -13,7 +13,14 @@ class AnalizadorSemantico : Visitor<Tipo> {
     private var tablaDeSimbolos: TablaDeSimbolos = TablaDeSimbolos()
 
     fun analizarSemantica(ast : AST){
-        println("Semantica analizada correctamente")
+        errores.clear()
+        tablaDeSimbolos = TablaDeSimbolos()
+
+        ast.raiz?.aceptar(this)
+
+        if (errores.isEmpty()) {
+            println("Semantica analizada correctamente")
+        }
     }
 
     override fun visit(nodo: NodoPrograma?): Tipo {
@@ -71,144 +78,305 @@ class AnalizadorSemantico : Visitor<Tipo> {
         return Tipo.VOID
     }
 
-    override fun visit(nodo: NodoEstilo?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoEstilo?): Tipo {
+        nodo?.valor?.aceptar(this)
+        return Tipo.VOID
     }
 
-    override fun visit(nodo: NodoAtributo?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoAtributo?): Tipo {
+        nodo?.valor?.aceptar(this)
+        return Tipo.VOID
     }
 
-    override fun visit(nodo: NodoBorde?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoBorde?): Tipo {
+        nodo?.num?.aceptar(this)
+        nodo?.tipo?.aceptar(this)
+        nodo?.color?.aceptar(this)
+        return Tipo.VOID
     }
 
-    override fun visit(nodo: NodoSeccion?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoSeccion?): Tipo {
+        val atributos = nodo?.atributos
+        atributos?.forEach { (it as? NodoAtributo)?.aceptar(this) }
+        return Tipo.VOID
     }
 
-    override fun visit(nodo: NodoTexto?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoTexto?): Tipo {
+        val atributos = nodo?.atributos
+        atributos?.forEach { (it as? NodoAtributo)?.aceptar(this) }
+        return Tipo.VOID
     }
 
-    override fun visit(nodo: NodoEmoji?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoEmoji?): Tipo {
+        return Tipo.VOID
     }
 
-    override fun visit(nodo: NodoTabla?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoTabla?): Tipo {
+        val atributos = nodo?.atributos
+        atributos?.forEach { (it as? NodoAtributo)?.aceptar(this) }
+        return Tipo.VOID
     }
 
-    override fun visit(nodo: NodoPregunta?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoPregunta?): Tipo {
+        return Tipo.SPECIAL
     }
 
-    override fun visit(nodo: NodoPreguntaAbierta?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoPreguntaAbierta?): Tipo {
+        val atributos = nodo?.atributos
+        atributos?.forEach { (it as? NodoAtributo)?.aceptar(this) }
+        return Tipo.SPECIAL
     }
 
-    override fun visit(nodo: NodoPreguntaSeleccionUnica?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoPreguntaSeleccionUnica?): Tipo {
+        val atributos = nodo?.atributos
+        atributos?.forEach { (it as? NodoAtributo)?.aceptar(this) }
+        return Tipo.SPECIAL
     }
 
-    override fun visit(nodo: NodoPreguntaSeleccionMultiple?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoPreguntaSeleccionMultiple?): Tipo {
+        val atributos = nodo?.atributos
+        atributos?.forEach { (it as? NodoAtributo)?.aceptar(this) }
+        return Tipo.SPECIAL
     }
 
-    override fun visit(nodo: NodoPreguntaDesplegable?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoPreguntaDesplegable?): Tipo {
+        val atributos = nodo?.atributos
+        atributos?.forEach { (it as? NodoAtributo)?.aceptar(this) }
+        return Tipo.SPECIAL
     }
 
     override fun visit(nodo: NodoDeclaracionVariable?): Tipo {
-        val declaracionCorrecta = tablaDeSimbolos.declarar(nodo?.identificador ?: "", Tipo.valueOf(nodo?.tipo ?: "ERROR"))
+        if (nodo == null) return Tipo.ERROR
 
-        if (!declaracionCorrecta) {
-            errores.add("Error semántico: variable ya declarada: ${nodo?.identificador?:""}")
+        val tipoDecl = try {
+            Tipo.valueOf(nodo.tipo.uppercase())
+        } catch (_: IllegalArgumentException) {
+            Tipo.ERROR
         }
 
-        if (nodo != null) {
-            if (nodo.expresionInicial != null) {
-                val tExpr = nodo.expresionInicial.aceptar(this)
+        val id = nodo.identificador
+        val declaracionCorrecta = tablaDeSimbolos.declarar(id, tipoDecl)
+        if (!declaracionCorrecta) {
+            errores.add("Error semántico: variable ya declarada: $id")
+        }
 
-                if (tExpr != Tipo.valueOf(nodo.tipo)) {
-                    errores.add("Error semántico: tipo incompatible: ${nodo.identificador}")
-                }
+        nodo.expresionInicial?.let { expr ->
+            val tExpr = expr.aceptar(this)
+            if (tipoDecl != Tipo.ERROR && tExpr != Tipo.ERROR && tExpr != tipoDecl) {
+                errores.add("Error semántico: tipo incompatible: $id")
             }
         }
 
-        return Tipo.ERROR
+        return Tipo.VOID
     }
 
-    override fun visit(nodo: NodoDeclaracionSpecial?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoDeclaracionSpecial?): Tipo {
+        val id = nodo?.identificador ?: ""
+        val declaracionCorrecta = tablaDeSimbolos.declarar(id, Tipo.SPECIAL)
+        if (!declaracionCorrecta) {
+            errores.add("Error semántico: variable ya declarada: $id")
+        }
+        nodo?.valor?.aceptar(this)
+        return Tipo.VOID
     }
 
-    override fun visit(nodo: NodoAsignacion?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoAsignacion?): Tipo {
+        val id = nodo?.identificador ?: ""
+        val tipoVar = tablaDeSimbolos.buscar(id)
+
+        if (tipoVar == null) {
+            errores.add("Error semántico: variable no declarada: $id")
+            nodo?.expresion?.aceptar(this)
+            return Tipo.ERROR
+        }
+
+        val tipoExpr = nodo?.expresion?.aceptar(this) ?: Tipo.ERROR
+        if (tipoExpr != Tipo.ERROR && tipoExpr != tipoVar) {
+            errores.add("Error semántico: tipo incompatible en asignación a $id")
+            return Tipo.ERROR
+        }
+        return Tipo.VOID
     }
 
-    override fun visit(nodo: NodoSentenciaElemento?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoSentenciaElemento?): Tipo {
+        nodo?.elemento?.aceptar(this)
+        return Tipo.VOID
     }
 
-    override fun visit(nodo: NodoIf?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoIf?): Tipo {
+        val tCond = nodo?.condicion?.aceptar(this) ?: Tipo.ERROR
+        if (tCond != Tipo.ERROR && tCond != Tipo.NUMBER && tCond != Tipo.BOOLEAN) {
+            errores.add("Error semántico: condición de if debe ser NUMBER o BOOLEAN")
+        }
+        nodo?.bloqueThen?.aceptar(this)
+        nodo?.cola?.aceptar(this)
+        return Tipo.VOID
     }
 
-    override fun visit(nodo: NodoElseIf?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoElseIf?): Tipo {
+        val tCond = nodo?.condicion?.aceptar(this) ?: Tipo.ERROR
+        if (tCond != Tipo.ERROR && tCond != Tipo.NUMBER && tCond != Tipo.BOOLEAN) {
+            errores.add("Error semántico: condición de elseif debe ser NUMBER o BOOLEAN")
+        }
+        nodo?.bloque?.aceptar(this)
+        nodo?.siguiente?.aceptar(this)
+        return Tipo.VOID
     }
 
-    override fun visit(nodo: NodoElse?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoElse?): Tipo {
+        nodo?.bloque?.aceptar(this)
+        return Tipo.VOID
     }
 
-    override fun visit(nodo: NodoFinIf?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoFinIf?): Tipo {
+        return Tipo.VOID
     }
 
-    override fun visit(nodo: NodoWhile?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoWhile?): Tipo {
+        val tCond = nodo?.condicion?.aceptar(this) ?: Tipo.ERROR
+        if (tCond != Tipo.ERROR && tCond != Tipo.NUMBER && tCond != Tipo.BOOLEAN) {
+            errores.add("Error semántico: condición de while debe ser NUMBER o BOOLEAN")
+        }
+        nodo?.bloque?.aceptar(this)
+        return Tipo.VOID
     }
 
-    override fun visit(nodo: NodoDoWhile?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoDoWhile?): Tipo {
+        nodo?.bloque?.aceptar(this)
+        val tCond = nodo?.condicion?.aceptar(this) ?: Tipo.ERROR
+        if (tCond != Tipo.ERROR && tCond != Tipo.NUMBER && tCond != Tipo.BOOLEAN) {
+            errores.add("Error semántico: condición de do-while debe ser NUMBER o BOOLEAN")
+        }
+        return Tipo.VOID
     }
 
-    override fun visit(nodo: NodoForClasico?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoForClasico?): Tipo {
+        nodo?.inicializacion?.aceptar(this)
+        val tCond = nodo?.condicion?.aceptar(this) ?: Tipo.ERROR
+        if (tCond != Tipo.ERROR && tCond != Tipo.NUMBER && tCond != Tipo.BOOLEAN) {
+            errores.add("Error semántico: condición de for debe ser NUMBER o BOOLEAN")
+        }
+        nodo?.actualizacion?.aceptar(this)
+        nodo?.bloque?.aceptar(this)
+        return Tipo.VOID
     }
 
-    override fun visit(nodo: NodoForRango?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoForRango?): Tipo {
+        val id = nodo?.identificador ?: ""
+        if (id.isNotBlank()) {
+            val ok = tablaDeSimbolos.declarar(id, Tipo.NUMBER)
+            if (!ok) {
+                errores.add("Error semántico: variable ya declarada: $id")
+            }
+        }
+
+        val tIni = nodo?.inicio?.aceptar(this) ?: Tipo.ERROR
+        val tFin = nodo?.fin?.aceptar(this) ?: Tipo.ERROR
+        if (tIni != Tipo.ERROR && tIni != Tipo.NUMBER) {
+            errores.add("Error semántico: inicio de rango no es NUMBER")
+        }
+        if (tFin != Tipo.ERROR && tFin != Tipo.NUMBER) {
+            errores.add("Error semántico: fin de rango no es NUMBER")
+        }
+        nodo?.bloque?.aceptar(this)
+        return Tipo.VOID
     }
 
     override fun visit(nodo: NodoExpresionBinaria?): Tipo? {
-        TODO("Not yet implemented")
+        val op = nodo?.operador ?: ""
+        val tIzq = nodo?.izquierda?.aceptar(this) ?: Tipo.ERROR
+        val tDer = nodo?.derecha?.aceptar(this) ?: Tipo.ERROR
+
+        if (tIzq == Tipo.ERROR || tDer == Tipo.ERROR) return Tipo.ERROR
+
+        return when (op) {
+            "+", "-", "*", "/", "^", "%" -> {
+                if (tIzq != Tipo.NUMBER || tDer != Tipo.NUMBER) {
+                    errores.add("Error semántico: operación aritmética requiere NUMBER")
+                    Tipo.ERROR
+                } else Tipo.NUMBER
+            }
+            "&&", "||" -> {
+                val izqOk = (tIzq == Tipo.BOOLEAN || tIzq == Tipo.NUMBER)
+                val derOk = (tDer == Tipo.BOOLEAN || tDer == Tipo.NUMBER)
+                if (!izqOk || !derOk) {
+                    errores.add("Error semántico: operación lógica requiere operandos NUMBER o BOOLEAN")
+                    Tipo.ERROR
+                } else Tipo.BOOLEAN
+            }
+            "==", "!!", "<", ">", "<=", ">=" -> {
+                if (tIzq != tDer) {
+                    errores.add("Error semántico: comparación entre tipos incompatibles")
+                    Tipo.ERROR
+                } else Tipo.BOOLEAN
+            }
+            else -> {
+                Tipo.ERROR
+            }
+        }
     }
 
     override fun visit(nodo: NodoExpresionUnaria?): Tipo? {
-        TODO("Not yet implemented")
+        val op = nodo?.operador ?: ""
+        val t = nodo?.expresion?.aceptar(this) ?: Tipo.ERROR
+        if (t == Tipo.ERROR) return Tipo.ERROR
+
+        return when (op) {
+            "~" -> {
+                when (t) {
+                    Tipo.BOOLEAN -> Tipo.BOOLEAN
+                    Tipo.NUMBER -> Tipo.NUMBER
+                    else -> {
+                        errores.add("Error semántico: operador ~ requiere BOOLEAN o NUMBER")
+                        Tipo.ERROR
+                    }
+                }
+            }
+            "-", "+" -> {
+                if (t != Tipo.NUMBER) {
+                    errores.add("Error semántico: operador requiere NUMBER")
+                    Tipo.ERROR
+                } else Tipo.NUMBER
+            }
+            else -> Tipo.ERROR
+        }
     }
 
     override fun visit(nodo: NodoLiteral?): Tipo? {
-        TODO("Not yet implemented")
+        val t = nodo?.tipoLiteral ?: return Tipo.ERROR
+        return try {
+            Tipo.valueOf(t.uppercase())
+        } catch (_: IllegalArgumentException) {
+            Tipo.ERROR
+        }
     }
 
-    override fun visit(nodo: NodoIdentificador?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoIdentificador?): Tipo {
+        val id = nodo?.nombre ?: ""
+        val tipo = tablaDeSimbolos.buscar(id)
+        if (tipo == null) {
+            errores.add("Error semántico: variable no declarada: $id")
+            return Tipo.ERROR
+        }
+        return tipo
     }
 
-    override fun visit(nodo: NodoCadenaCompuesta?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoCadenaCompuesta?): Tipo {
+        val partes = nodo?.partes ?: emptyList()
+        for (p in partes) {
+            p.aceptar(this)
+        }
+        return Tipo.STRING
     }
 
-    override fun visit(nodo: NodoLlamadaMetodo?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoLlamadaMetodo?): Tipo {
+        val args = nodo?.argumentos
+        args?.forEach { (it as? NodoExpresion)?.aceptar(this) }
+        return Tipo.VOID
     }
 
-    override fun visit(nodo: NodoComodin?): Tipo? {
-        TODO("Not yet implemented")
+    override fun visit(nodo: NodoComodin?): Tipo {
+        return Tipo.VOID
     }
 
 

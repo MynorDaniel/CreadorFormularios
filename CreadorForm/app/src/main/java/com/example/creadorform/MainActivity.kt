@@ -32,8 +32,15 @@ class MainActivity : ComponentActivity() {
 }
 
 var entrada = """
-    number x = 10;
+    number x = 4
+    string f = " g "
+    $ y = 5
+    $ number z = x + y
     string texto = "hola mundo"
+     IF(9){
+    
+    }
+    
 """.trimIndent()
 
 @Composable
