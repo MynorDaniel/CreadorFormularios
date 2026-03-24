@@ -42,7 +42,7 @@ public class ManejadorAnalisis {
                     sbErrores.append(System.lineSeparator());
                 }
             }
-            generarReporteLexer(lexer, sb, sbErrores);
+            //generarReporteLexer(lexer, sb, sbErrores);
             reporteGeneral = sb.toString();
             return ast;
         } catch (Exception ex) {
@@ -50,7 +50,7 @@ public class ManejadorAnalisis {
             sb.append(System.lineSeparator());
             sb.append(ex.getMessage());
             sb.append(System.lineSeparator());
-            generarReporteLexer(lexer, sb, sbErrores);
+            //generarReporteLexer(lexer, sb, sbErrores);
             reporteGeneral = sb.toString();
             return new AST(null);
         }
@@ -80,7 +80,7 @@ public class ManejadorAnalisis {
                     sbErrores.append(System.lineSeparator());
                 }
             }
-            generarReporteLexer(lexer, sb, sbErrores);
+            //generarReporteLexer(lexer, sb, sbErrores);
             reporteGeneral = sb.toString();
             return ast;
         } catch (Exception ex) {
@@ -88,7 +88,7 @@ public class ManejadorAnalisis {
             sb.append(System.lineSeparator());
             sb.append(ex.getMessage());
             sb.append(System.lineSeparator());
-            generarReporteLexer(lexer, sb, sbErrores);
+            //generarReporteLexer(lexer, sb, sbErrores);
             reporteGeneral = sb.toString();
             
             return new AST(null);

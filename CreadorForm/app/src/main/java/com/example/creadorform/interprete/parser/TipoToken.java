@@ -20,6 +20,7 @@ public enum TipoToken {
     MODULO,
     PARENTESIS_APERTURA,
     PARENTESIS_CIERRE,
+    BORDER,
 
     MAYOR_QUE,
     MENOR_QUE,

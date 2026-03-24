@@ -14,12 +14,12 @@ public class sympkm {
   public static final int ENTERO = 2;
   public static final int RESTA = 7;
   public static final int FUENTE_PREDEFINIDA = 34;
-  public static final int EMOJI_SERIO = 40;
+  public static final int EMOJI_SERIO = 41;
   public static final int FONT = 18;
   public static final int HORIZONTAL = 32;
   public static final int COLOR_HEXADECIMAL = 4;
-  public static final int EMOJI_ESTRELLA = 42;
-  public static final int EMOJI_CORAZON = 41;
+  public static final int EMOJI_ESTRELLA = 43;
+  public static final int EMOJI_CORAZON = 42;
   public static final int SELECT = 29;
   public static final int VERTICAL = 31;
   public static final int BACKGROUND = 17;
@@ -27,21 +27,22 @@ public class sympkm {
   public static final int SIZE = 21;
   public static final int TABLE = 24;
   public static final int error = 1;
-  public static final int EMOJI_GATO = 43;
-  public static final int COMA = 36;
+  public static final int EMOJI_GATO = 44;
+  public static final int COMA = 37;
   public static final int CADENA = 3;
   public static final int LINE = 25;
   public static final int MAYOR_QUE = 13;
-  public static final int EMOJI_RISA = 38;
+  public static final int EMOJI_RISA = 39;
   public static final int MULTIPLE = 30;
-  public static final int ASIGNACION = 37;
+  public static final int ASIGNACION = 38;
   public static final int COLOR = 16;
   public static final int FAMILY = 19;
   public static final int CONTENT = 23;
   public static final int LLAVE_APERTURA = 11;
   public static final int ELEMENT = 26;
-  public static final int EMOJI_TRISTE = 39;
+  public static final int EMOJI_TRISTE = 40;
   public static final int DROP = 28;
+  public static final int BORDER = 36;
   public static final int OPEN = 27;
   public static final int LLAVE_CIERRE = 12;
   public static final int MENOR_QUE = 14;
@@ -89,6 +90,7 @@ public class sympkm {
   "COLOR_PREDEFINIDO",
   "FUENTE_PREDEFINIDA",
   "TIPO_BORDE",
+  "BORDER",
   "COMA",
   "ASIGNACION",
   "EMOJI_RISA",

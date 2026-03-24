@@ -15,7 +15,7 @@ class AnalizadorSemantico : Visitor<Tipo> {
     fun analizarSemantica(ast : AST){
         errores.clear()
         tablaDeSimbolos = TablaDeSimbolos()
-
+        tablaDeSimbolos.declarar("NUMBER", Tipo.VOID)
         ast.raiz?.aceptar(this)
 
         if (errores.isEmpty()) {
@@ -251,6 +251,12 @@ class AnalizadorSemantico : Visitor<Tipo> {
     }
 
     override fun visit(nodo: NodoForClasico?): Tipo {
+        val id = nodo?.inicializacion?.identificador
+        id?.let {
+            if (tablaDeSimbolos.buscar(it) == null) {
+                tablaDeSimbolos.declarar(id, Tipo.NUMBER)
+            }
+        }
         nodo?.inicializacion?.aceptar(this)
         val tCond = nodo?.condicion?.aceptar(this) ?: Tipo.ERROR
         if (tCond != Tipo.ERROR && tCond != Tipo.NUMBER && tCond != Tipo.BOOLEAN) {
@@ -376,7 +382,7 @@ class AnalizadorSemantico : Visitor<Tipo> {
     }
 
     override fun visit(nodo: NodoComodin?): Tipo {
-        return Tipo.VOID
+        return Tipo.NUMBER
     }
 
 

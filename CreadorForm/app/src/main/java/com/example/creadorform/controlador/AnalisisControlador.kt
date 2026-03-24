@@ -1,9 +1,11 @@
 package com.example.creadorform.controlador
 
 import com.example.creadorform.dominio.Formulario
+import com.example.creadorform.interprete.Evaluador
 import com.example.creadorform.interprete.parser.ManejadorAnalisis
 import com.example.creadorform.interprete.analizadorsemantico.AnalizadorSemantico
 import com.example.creadorform.interprete.ast.AST
+import com.example.creadorform.interprete.ast.NodoPrograma
 import java.io.StringReader
 
 class AnalisisControlador {
@@ -13,25 +15,39 @@ class AnalisisControlador {
 
     fun analizarForm(entrada: String): Formulario{
 
-        // Analisis lexico y sintactico
-        val manejador: ManejadorAnalisis = ManejadorAnalisis()
-        val ast: AST = manejador.analizarForm(StringReader(entrada))
-        ast.imprimir()
+        try {
+            if (entrada.isBlank()) {
+                throw IllegalArgumentException("La entrada no puede estar vacía.")
+            }
 
-        // Analisis semantico
-        val analizadorSemantico : AnalizadorSemantico = AnalizadorSemantico()
-        analizadorSemantico.analizarSemantica(ast)
+            // Analisis lexico y sintactico
+            val manejador: ManejadorAnalisis = ManejadorAnalisis()
+            val ast: AST = manejador.analizarForm(StringReader(entrada))
+            ast.imprimir()
 
-        val erroresSemanticos = analizadorSemantico.errores.joinToString(separator = "\n")
+            // Analisis semantico
+            val analizadorSemantico : AnalizadorSemantico = AnalizadorSemantico()
+            analizadorSemantico.analizarSemantica(ast)
 
-        val sb = StringBuilder()
-        _errores = sb.append(manejador.reporteGeneral)
-            .append("\n")
-            .append(erroresSemanticos)
-            .toString()
+            val erroresSemanticos = analizadorSemantico.errores.joinToString(separator = "\n")
 
-        // Creacion de la entrada
-        val formulario: Formulario = Formulario()
-        return formulario
+            val sb = StringBuilder()
+            _errores = sb.append(manejador.reporteGeneral)
+                .append("\n")
+                .append(erroresSemanticos)
+                .toString()
+
+            if (manejador.reporteGeneral.isNotBlank() || analizadorSemantico.errores.isNotEmpty()) {
+                return Formulario()
+            }
+
+            val evaluador = Evaluador()
+            return ast.raiz?.let { evaluador.evaluar(it as NodoPrograma) } ?: Formulario()
+        }catch (e: Exception) {
+            _errores = e.message ?: "Error desconocido"
+            e.printStackTrace()
+            return Formulario()
+        }
+
     }
 }

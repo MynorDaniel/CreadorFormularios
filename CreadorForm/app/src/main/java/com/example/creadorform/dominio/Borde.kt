@@ -25,5 +25,9 @@ class Borde(
     fun setColor(valor: Color) {
         _color = valor
     }
+
+    override fun toString(): String {
+        return "Borde(grosor=$grosor, tipo=$tipo, color=$color)"
+    }
 }
 

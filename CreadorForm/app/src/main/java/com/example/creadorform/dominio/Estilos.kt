@@ -39,5 +39,11 @@ class Estilos(
     fun setBorde(valor: Borde) {
         _borde = valor
     }
+
+    override fun toString(): String = resumen()
+
+    internal fun resumen(): String {
+        return "Estilos(color=${color}, fondo=${colorFondo}, fuente=$fuente, textSize=$sizeTexto, borde=$borde)"
+    }
 }
 

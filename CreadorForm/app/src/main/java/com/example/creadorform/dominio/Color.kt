@@ -59,5 +59,7 @@ class Color(colorHex: String = "#000000") {
         val b = ((b1 + m) * 255f).toInt().coerceIn(0, 255)
         return Triple(r, g, b)
     }
+
+    override fun toString(): String = colorHex
 }
 
