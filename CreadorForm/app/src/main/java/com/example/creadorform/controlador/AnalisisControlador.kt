@@ -13,7 +13,7 @@ class AnalisisControlador {
     private var _errores = String()
     val errores: String get() = _errores
 
-    fun analizarForm(entrada: String): Formulario{
+    fun analizar(entrada: String, boolean: Boolean): Formulario{
 
         try {
             if (entrada.isBlank()) {
@@ -22,7 +22,13 @@ class AnalisisControlador {
 
             // Analisis lexico y sintactico
             val manejador: ManejadorAnalisis = ManejadorAnalisis()
-            val ast: AST = manejador.analizarForm(StringReader(entrada))
+
+            val ast: AST
+            if(boolean){
+                ast = manejador.analizarForm(StringReader(entrada))
+            }else{
+                ast = manejador.analizarPKM(StringReader(entrada))
+            }
             ast.imprimir()
 
             // Analisis semantico
@@ -50,4 +56,6 @@ class AnalisisControlador {
         }
 
     }
+
+
 }

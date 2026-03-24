@@ -155,7 +155,21 @@ class Evaluador : Visitor<Any> {
     override fun visit(nodo: NodoAtributo?): Any? {
         if (nodo == null) return null
         val nombre = nodo.nombre
-        val valor = nodo.valor?.aceptar(this)
+        val valor = when {
+            (nombre.equals("opciones", ignoreCase = true) || nombre.equals("options", ignoreCase = true))
+                && nodo.valor is NodoCadenaCompuesta -> {
+                val cc = nodo.valor as NodoCadenaCompuesta
+                cc.partes.map { it.aceptar(this)?.toString() ?: "" }
+            }
+
+            (nombre.equals("respuestas", ignoreCase = true) || nombre.equals("correct", ignoreCase = true))
+                && nodo.valor is NodoLiteral
+                && (nodo.valor as NodoLiteral).tipoLiteral.equals("lista_int", ignoreCase = true) -> {
+                parseListaInts((nodo.valor as NodoLiteral).valor)
+            }
+
+            else -> nodo.valor?.aceptar(this)
+        }
         return AtributoEvaluado(nombre, valor)
     }
 
@@ -183,7 +197,7 @@ class Evaluador : Visitor<Any> {
         aplicarAtributosElemento(seccion, attrs)
 
         // elementos
-        val children = attrs["elements"]
+        val children = attr(attrs, "elements", "contenido")
         if (children is List<*>) {
             children.filterIsInstance<Elemento>().forEach { seccion.addElemento(it) }
         }
@@ -195,7 +209,7 @@ class Evaluador : Visitor<Any> {
         val texto = Texto()
         val attrs = recolectarAtributos(nodo.atributos)
         aplicarAtributosElemento(texto, attrs)
-        attrs["content"]?.let { texto.setContenido(it.toString()) }
+        attr(attrs, "content", "contenido")?.let { texto.setContenido(it.toString()) }
         return texto
     }
 
@@ -217,7 +231,7 @@ class Evaluador : Visitor<Any> {
         val attrs = recolectarAtributos(nodo.atributos)
         aplicarAtributosElemento(tabla, attrs)
 
-        val filas = attrs["elements"]
+        val filas = attr(attrs, "elements", "filas")
         if (filas is List<*> && filas.isNotEmpty() && filas[0] is List<*>) {
             val lineas: MutableList<Linea> = filas
                 .filterIsInstance<List<*>>()
@@ -241,7 +255,7 @@ class Evaluador : Visitor<Any> {
         val pregunta = PreguntaAbierta()
         val attrs = recolectarAtributos(nodo.atributos)
         aplicarAtributosElemento(pregunta, attrs)
-        attrs["label"]?.let { pregunta.setLabel(it.toString()) }
+        attr(attrs, "label", "contenido", "content")?.let { pregunta.setLabel(it.toString()) }
         return pregunta
     }
 
@@ -250,12 +264,12 @@ class Evaluador : Visitor<Any> {
         val pregunta = PreguntaUnica()
         val attrs = recolectarAtributos(nodo.atributos)
         aplicarAtributosElemento(pregunta, attrs)
-        attrs["label"]?.let { pregunta.setLabel(it.toString()) }
-        attrs["options"]?.let { opts ->
-            val lista = (opts as? List<*>)?.map { it?.toString() ?: "" }?.toMutableList() ?: mutableListOf()
+        attr(attrs, "label", "contenido", "content")?.let { pregunta.setLabel(it.toString()) }
+        attr(attrs, "options", "opciones")?.let { opts ->
+            val lista = toStringList(opts).toMutableList()
             pregunta.setOpciones(lista)
         }
-        attrs["correct"]?.let { pregunta.setOpcionCorrecta(parseInt(it, -1)) }
+        attr(attrs, "correct", "respuesta")?.let { pregunta.setOpcionCorrecta(parseInt(it, -1)) }
         return pregunta
     }
 
@@ -264,13 +278,13 @@ class Evaluador : Visitor<Any> {
         val pregunta = PreguntaMultiple()
         val attrs = recolectarAtributos(nodo.atributos)
         aplicarAtributosElemento(pregunta, attrs)
-        attrs["label"]?.let { pregunta.setLabel(it.toString()) }
-        attrs["options"]?.let { opts ->
-            val lista = (opts as? List<*>)?.map { it?.toString() ?: "" }?.toMutableList() ?: mutableListOf()
+        attr(attrs, "label", "contenido", "content")?.let { pregunta.setLabel(it.toString()) }
+        attr(attrs, "options", "opciones")?.let { opts ->
+            val lista = toStringList(opts).toMutableList()
             pregunta.setOpciones(lista)
         }
-        attrs["correct"]?.let { corr ->
-            val indices = (corr as? List<*>)?.mapNotNull { parseIntOrNull(it) }?.toMutableList() ?: mutableListOf()
+        attr(attrs, "correct", "respuestas")?.let { corr ->
+            val indices = toIntList(corr).toMutableList()
             pregunta.setOpcionesCorrectas(indices)
         }
         return pregunta
@@ -281,12 +295,12 @@ class Evaluador : Visitor<Any> {
         val pregunta = PreguntaDesplegable()
         val attrs = recolectarAtributos(nodo.atributos)
         aplicarAtributosElemento(pregunta, attrs)
-        attrs["label"]?.let { pregunta.setLabel(it.toString()) }
-        attrs["options"]?.let { opts ->
-            val lista = (opts as? List<*>)?.map { it?.toString() ?: "" }?.toMutableList() ?: mutableListOf()
+        attr(attrs, "label", "contenido", "content")?.let { pregunta.setLabel(it.toString()) }
+        attr(attrs, "options", "opciones")?.let { opts ->
+            val lista = toStringList(opts).toMutableList()
             pregunta.setOpciones(lista)
         }
-        attrs["correct"]?.let { pregunta.setOpcionCorrecta(parseInt(it, -1)) }
+        attr(attrs, "correct", "respuesta")?.let { pregunta.setOpcionCorrecta(parseInt(it, -1)) }
         return pregunta
     }
 
@@ -705,11 +719,43 @@ class Evaluador : Visitor<Any> {
     }
 
     private fun aplicarAtributosElemento(elem: Elemento, attrs: Map<String, Any?>) {
-        attrs["width"]?.let { elem.setWidth(parseInt(it, elem.width)) }
-        attrs["height"]?.let { elem.setHeight(parseInt(it, elem.height)) }
-        attrs["styles"]?.let {
+        // En PKM se usan x/y para width/height.
+        attr(attrs, "width", "x")?.let { elem.setWidth(parseInt(it, elem.width)) }
+        attr(attrs, "height", "y")?.let { elem.setHeight(parseInt(it, elem.height)) }
+        attr(attrs, "styles", "estilos")?.let {
             if (it is Estilos) elem.setEstilos(it)
         }
+    }
+
+    private fun attr(attrs: Map<String, Any?>, vararg keys: String): Any? {
+        for (k in keys) {
+            if (attrs.containsKey(k)) return attrs[k]
+        }
+        return null
+    }
+
+    private fun toStringList(v: Any?): List<String> {
+        return when (v) {
+            is List<*> -> v.map { it?.toString() ?: "" }
+            null -> emptyList()
+            else -> listOf(v.toString())
+        }
+    }
+
+    private fun toIntList(v: Any?): List<Int> {
+        return when (v) {
+            is List<*> -> v.mapNotNull { parseIntOrNull(it) }
+            is String -> parseListaInts(v)
+            else -> emptyList()
+        }
+    }
+
+    private fun parseListaInts(texto: String): List<Int> {
+        return texto
+            .removePrefix("[")
+            .removeSuffix("]")
+            .split(",")
+            .mapNotNull { it.trim().toIntOrNull() }
     }
 
     private fun verdadero(v: Any?): Boolean {
